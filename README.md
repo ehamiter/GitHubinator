@@ -4,6 +4,7 @@
 
 This will allow you to select text in a Sublime Text 2 file, and see the highlighted lines on the remote repo, if one exists.
 
+![Screenshot](http://i.imgur.com/lcJ78.png)
 
 ## Caveats
 
