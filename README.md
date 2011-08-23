@@ -1,5 +1,6 @@
-# GitHubinator^1
-^1 _With regards to [Dr. Heinz Doofenshmirtz](http://en.wikipedia.org/wiki/Dr._Heinz_Doofenshmirtz)_
+# GitHubinator*
+
+*_With regards to [Dr. Heinz Doofenshmirtz](http://en.wikipedia.org/wiki/Dr._Heinz_Doofenshmirtz)_
 
 This will allow you to select text in a Sublime Text 2 file, and see the highlighted lines on the remote repo, if one exists.
 
