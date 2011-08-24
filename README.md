@@ -6,10 +6,6 @@ This will allow you to select text in a Sublime Text 2 file, and see the highlig
 
 ![Screenshot](http://i.imgur.com/lcJ78.png)
 
-## Caveats
-
-This works for me on a Mac. I'm not sure it will for you in your environment. If you find that it doesn't, and then figure out how to make it work, I'm open to pull requests.
-
 
 ## Installation
 
