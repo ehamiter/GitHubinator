@@ -5,7 +5,7 @@ import sublime_plugin
 
 
 class GithubinatorCommand(sublime_plugin.TextCommand):
-    '''This will allow you to highlight your code, activate the plugin, then see the 
+    '''This will allow you to highlight your code, activate the plugin, then see the
     highlighted results on GitHub.
     '''
 
@@ -22,6 +22,10 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             print 'Could not find .git directory.'
             return
 
+        git_head_path = os.path.join(git_path,'.git','HEAD')
+        with open(git_head_path, "r") as git_head_file:
+            head = git_head_file.read()
+
         git_config_path = os.path.join(git_path,'.git','config')
         new_git_path = folder_name[len(git_path):]
 
@@ -35,7 +39,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             lines = begin_line
         else:
             lines = '%s-%s' % (begin_line, end_line)
-        
+
         for remote in ['mainline', 'origin']:
             regex = r'.*\s.*(?:https://github\.com/|github\.com:)(.*)/(.*?)(?:\.git)?\r?\n'
             result = re.search(remote + regex, config)
@@ -43,8 +47,17 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                 continue
             matches = result.groups()
 
-            full_link = 'https://github.com/%s/%s/blob/master%s/%s#L%s' % \
-                (matches[0], matches[1], new_git_path, file_name, lines)
+            head_regex = r'(ref:\srefs/heads/)*(.*)'
+            head_result = re.search(head_regex, head)
+
+            if head_result:
+                head_matches = head_result.groups()
+                branch = head_matches[1]
+            else:
+                branch = 'master'
+
+            full_link = 'https://github.com/%s/%s/blob/%s%s/%s#L%s' % \
+                (matches[0], matches[1], branch, new_git_path, file_name, lines)
             sublime.set_clipboard(full_link)
             sublime.status_message('Copied %s to clipboard.' % full_link)
             print 'Copied %s to clipboard.' % full_link
