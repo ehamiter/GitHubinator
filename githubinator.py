@@ -5,7 +5,7 @@ import sublime_plugin
 
 
 class GithubinatorCommand(sublime_plugin.TextCommand):
-    '''This will allow you to highlight your code, activate the plugin, then see the 
+    '''This will allow you to highlight your code, activate the plugin, then see the
     highlighted results on GitHub.
     '''
 
@@ -35,8 +35,8 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             lines = begin_line
         else:
             lines = '%s-%s' % (begin_line, end_line)
-        
-        for remote in ['mainline', 'origin']:
+
+        for remote in ['origin', 'mainline']:
             regex = r'.*\s.*(?:https://github\.com/|github\.com:)(.*)/(.*?)(?:\.git)?\r?\n'
             result = re.search(remote + regex, config)
             if not result:
