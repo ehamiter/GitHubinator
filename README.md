@@ -9,12 +9,24 @@ This will allow you to select text in a Sublime Text 2 file, and see the highlig
 
 ## Installation
 
+If you use [Package Control](http://wbond.net/sublime_packages/package_control), just install it from there. If not:
+
 Clone this repo to your Sublime Text 2 Packages folder:
 
     cd ~/"Library/Application Support/Sublime Text 2/Packages/"
     git clone https://github.com/ehamiter/ST2-GitHubinator.git
 
 The plugin should be picked up automatically. If not, restart Sublime Text.
+
+
+## Configuration
+
+The defaults should work for most setups, but if you have a different branch or remote name, you can configure it in the `Githubinator.sublime-settings` file:
+
+    {
+      "default_branch": "master",
+      "default_remote": "origin"
+    }
 
 
 ## Usage
