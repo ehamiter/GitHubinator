@@ -5,11 +5,16 @@ import sublime_plugin
 
 
 class GithubinatorCommand(sublime_plugin.TextCommand):
-    '''This will allow you to highlight your code, activate the plugin, then see the 
+    '''This will allow you to highlight your code, activate the plugin, then see the
     highlighted results on GitHub.
     '''
 
+    def load_config(self):
+        s = sublime.load_settings("Githubinator.sublime-settings")
+        global DEFAULT_GIT_BRANCH; DEFAULT_GIT_BRANCH = s.get("default_branch")
+
     def run(self, edit):
+        self.load_config()
         if not self.view.file_name():
             return
 
@@ -35,7 +40,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             lines = begin_line
         else:
             lines = '%s-%s' % (begin_line, end_line)
-        
+
         for remote in ['mainline', 'origin']:
             regex = r'.*\s.*(?:https://github\.com/|github\.com:)(.*)/(.*?)(?:\.git)?\r?\n'
             result = re.search(remote + regex, config)
@@ -43,8 +48,8 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                 continue
             matches = result.groups()
 
-            full_link = 'https://github.com/%s/%s/blob/master%s/%s#L%s' % \
-                (matches[0], matches[1], new_git_path, file_name, lines)
+            full_link = 'https://github.com/%s/%s/blob/%s%s/%s#L%s' % \
+                (matches[0], matches[1], new_git_path, DEFAULT_GIT_BRANCH, file_name, lines)
             sublime.set_clipboard(full_link)
             sublime.status_message('Copied %s to clipboard.' % full_link)
             print 'Copied %s to clipboard.' % full_link
