@@ -49,7 +49,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             matches = result.groups()
 
             full_link = 'https://github.com/%s/%s/blob/%s%s/%s#L%s' % \
-                (matches[0], matches[1], new_git_path, DEFAULT_GIT_BRANCH, file_name, lines)
+                (matches[0], matches[1], DEFAULT_GIT_BRANCH, new_git_path, file_name, lines)
             sublime.set_clipboard(full_link)
             sublime.status_message('Copied %s to clipboard.' % full_link)
             print 'Copied %s to clipboard.' % full_link
