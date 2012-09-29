@@ -21,10 +21,9 @@ The plugin should be picked up automatically. If not, restart Sublime Text.
 
 ## Configuration
 
-The defaults should work for most setups, but if you have a different branch or remote name, you can configure it in the `Githubinator.sublime-settings` file:
+The defaults should work for most setups, but if you have a different remote name, you can configure it in the `Githubinator.sublime-settings` file:
 
     {
-      "default_branch": "master",
       "default_remote": "origin"
     }
 
