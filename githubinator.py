@@ -49,9 +49,9 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             matches = result.groups()
 
             ref_path = open(os.path.join(git_path, '.git', 'HEAD'), "r").read().replace('ref: ', '')[:-1]
-            ref = open(os.path.join(git_path, '.git', ref_path), "r").read()[:-1]
+            branch = ref_path.replace('refs/heads/','')
             full_link = 'https://github.com/%s/%s/blob/%s%s/%s#L%s' % \
-                (matches[0], matches[1], ref, new_git_path, file_name, lines)
+                (matches[0], matches[1], branch, new_git_path, file_name, lines)
             sublime.set_clipboard(full_link)
             sublime.status_message('Copied %s to clipboard.' % full_link)
             print 'Copied %s to clipboard.' % full_link
