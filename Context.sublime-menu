@@ -1,3 +1,4 @@
 [
-    { "command": "githubinator", "caption": "GitHubinator" }
+    { "command": "githubinator", "caption": "GitHubinator", "args": { "permalink": false } },
+    { "command": "githubinator", "caption": "GitHubinator Permalink", "args": { "permalink": true } }
 ]
