@@ -1,3 +1,4 @@
 [
-    { "keys": ["super+\\"], "command": "githubinator"}
+    { "keys": ["super+\\"], "command": "githubinator", "args" : { "permalink": false }},
+    { "keys": ["shift+super+\\"], "command": "githubinator", "args" : { "permalink": true }}
 ]
