@@ -18,7 +18,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         if not self.view.file_name():
             return
 
-        full_name = self.view.file_name()
+        full_name = os.path.realpath(self.view.file_name())
         folder_name, file_name = os.path.split(full_name)
 
         git_path = self.recurse_dir(folder_name, '.git')
