@@ -13,7 +13,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         s = sublime.load_settings("Githubinator.sublime-settings")
         global DEFAULT_GIT_REMOTE; DEFAULT_GIT_REMOTE = s.get("default_remote")
 
-    def run(self, edit, permalink = False):
+    def run(self, edit, permalink = False, mode = 'blob'):
         self.load_config()
         if not self.view.file_name():
             return
@@ -53,8 +53,8 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             sha = open(os.path.join(git_path, '.git', ref_path), "r").read()[:-1]
             target = sha if permalink else branch
 
-            full_link = 'https://github.com/%s/%s/blob/%s%s/%s#L%s' % \
-                (matches[0], matches[1], target, new_git_path, file_name, lines)
+            full_link = 'https://github.com/%s/%s/%s/%s%s/%s#L%s' % \
+                (matches[0], matches[1], mode, target, new_git_path, file_name, lines)
             sublime.set_clipboard(full_link)
             sublime.status_message('Copied %s to clipboard.' % full_link)
             print 'Copied %s to clipboard.' % full_link
