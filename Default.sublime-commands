@@ -8,5 +8,15 @@
     "caption": "GitHubinator Permalink",
     "command": "githubinator",
     "args": { "permalink": true }
+  },
+  {
+    "caption": "GitHubinator Blame",
+    "command": "githubinator",
+    "args": { "permalink": false, "mode": "blame" }
+  },
+  {
+    "caption": "GitHubinator Blame Permalink",
+    "command": "githubinator",
+    "args": { "permalink": true, "mode": "blame" }
   }
 ]
