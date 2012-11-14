@@ -42,7 +42,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             lines = '%s-%s' % (begin_line, end_line)
 
         for remote in [DEFAULT_GIT_REMOTE]:
-            regex = r'.*\s.*(?:https://github\.com/|github\.com:)(.*)/(.*?)(?:\.git)?\r?\n'
+            regex = r'.*\s.*(?:https://github\.com/|github\.com:|git://github\.com/)(.*)/(.*?)(?:\.git)?\r?\n'
             result = re.search(remote + regex, config)
             if not result:
                 continue
