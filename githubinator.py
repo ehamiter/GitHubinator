@@ -24,7 +24,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         git_path = self.recurse_dir(folder_name, '.git')
         if not git_path:
             sublime.status_message('Could not find .git directory.')
-            print 'Could not find .git directory.'
+            print('Could not find .git directory.')
             return
 
         git_config_path = os.path.join(git_path, '.git', 'config')
@@ -57,7 +57,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                 (matches[0], matches[1], mode, target, new_git_path, file_name, lines)
             sublime.set_clipboard(full_link)
             sublime.status_message('Copied %s to clipboard.' % full_link)
-            print 'Copied %s to clipboard.' % full_link
+            print('Copied %s to clipboard.' % full_link)
             self.view.window().run_command('open_url', {"url": full_link})
             break
 
