@@ -12,6 +12,8 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
     def load_config(self):
         s = sublime.load_settings("Githubinator.sublime-settings")
         global DEFAULT_GIT_REMOTE; DEFAULT_GIT_REMOTE = s.get("default_remote")
+        if not isinstance(DEFAULT_GIT_REMOTE, list):
+            DEFAULT_GIT_REMOTE = [DEFAULT_GIT_REMOTE]
 
     def run(self, edit, permalink = False, mode = 'blob'):
         self.load_config()
@@ -41,7 +43,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         else:
             lines = '%s-%s' % (begin_line, end_line)
 
-        for remote in [DEFAULT_GIT_REMOTE]:
+        for remote in DEFAULT_GIT_REMOTE:
             regex = r'.*\s.*(?:https://github\.com/|github\.com:|git://github\.com/)(.*)/(.*?)(?:\.git)?\r?\n'
             result = re.search(remote + regex, config)
             if not result:
