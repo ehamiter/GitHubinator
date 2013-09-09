@@ -81,4 +81,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
 
     def is_enabled(self):
-        return self.view.file_name() and len(self.view.file_name()) > 0
+        if self.view.file_name() and len(self.view.file_name()) > 0:
+            return True
+        else:
+            return False
