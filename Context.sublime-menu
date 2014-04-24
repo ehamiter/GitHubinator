@@ -1,6 +1,8 @@
 [
     { "command": "githubinator", "caption": "GitHubinator", "args": { "permalink": false } },
+    { "command": "githubinator", "caption": "GitHubinator on Master", "args": { "permalink": false, "branch": "master" } },
     { "command": "githubinator", "caption": "GitHubinator Permalink", "args": { "permalink": true } },
     { "command": "githubinator", "caption": "GitHubinator Blame", "args": { "permalink": false, "mode": "blame" } },
+    { "command": "githubinator", "caption": "GitHubinator Blame on Master", "args": { "permalink": false, "mode": "blame", "branch": "master" } },
     { "command": "githubinator", "caption": "GitHubinator Blame Permalink", "args": { "permalink": true, "mode": "blame" } }
 ]
