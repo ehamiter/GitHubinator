@@ -5,6 +5,11 @@
     "args": { "permalink": false }
   },
   {
+    "caption": "GitHubinator on Master",
+    "command": "githubinator",
+    "args": { "permalink": false, "branch": "master" }
+  },
+  {
     "caption": "GitHubinator Permalink",
     "command": "githubinator",
     "args": { "permalink": true }
@@ -13,6 +18,11 @@
     "caption": "GitHubinator Blame",
     "command": "githubinator",
     "args": { "permalink": false, "mode": "blame" }
+  },
+  {
+    "caption": "GitHubinator Blame on Master",
+    "command": "githubinator",
+    "args": { "permalink": false, "mode": "blame", "branch": "master" }
   },
   {
     "caption": "GitHubinator Blame Permalink",
