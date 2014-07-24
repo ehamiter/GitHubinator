@@ -48,9 +48,16 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         else:
             lines = '%s-%s' % (begin_line, end_line)
 
+        HTTP = 'https'
+        result = re.search(r'url.*?=.*?(https?)://([^/]*)/', config)
+        if result:
+            matches = result.groups()
+            HTTP = matches[0]
+            DEFAULT_GITHUB_HOST = matches[1]
+        
         re_host = re.escape(DEFAULT_GITHUB_HOST)
         for remote in DEFAULT_GIT_REMOTE:
-            regex = r'.*\s.*(?:https://%s/|%s:|git://%s/)(.*)/(.*?)(?:\.git)?\r?\n' % (re_host, re_host, re_host)
+            regex = r'.*\s.*(?:https?://%s/|%s:|git://%s/)(.*)/(.*?)(?:\.git)?\r?\n' % (re_host, re_host, re_host)
             result = re.search(remote + regex, config)
             if not result:
                 continue
@@ -61,7 +68,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             sha = open(os.path.join(git_path, '.git', ref_path), "r").read()[:-1]
             target = sha if permalink else branch
 
-            full_link = 'https://%s/%s/%s/%s/%s%s/%s#L%s' % \
+            full_link = HTTP + '://%s/%s/%s/%s/%s%s/%s#L%s' % \
                 (DEFAULT_GITHUB_HOST, matches[0], matches[1], mode, target, new_git_path, file_name, lines)
             sublime.set_clipboard(full_link)
             sublime.status_message('Copied %s to clipboard.' % full_link)
