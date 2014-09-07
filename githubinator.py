@@ -49,11 +49,14 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             lines = '%s-%s' % (begin_line, end_line)
 
         HTTP = 'https'
-        result = re.search(r'url.*?=.*?(https?)://([^/]*)/', config)
+        result = re.search(r'url.*?=.*?((https?)://([^/]*)/)|(git@([^:]*):)', config)
         if result:
             matches = result.groups()
-            HTTP = matches[0]
-            DEFAULT_GITHUB_HOST = matches[1]
+            if matches[0]:
+                HTTP = matches[1]
+                DEFAULT_GITHUB_HOST = matches[2]
+            else:
+                DEFAULT_GITHUB_HOST = matches[4]
         
         re_host = re.escape(DEFAULT_GITHUB_HOST)
         for remote in DEFAULT_GIT_REMOTE:
