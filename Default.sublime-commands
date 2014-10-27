@@ -5,6 +5,11 @@
     "args": { "permalink": false }
   },
   {
+    "caption": "Copy GitHubinator...",
+    "command": "githubinator",
+    "args": { "copyonly": true }
+  },
+  {
     "caption": "GitHubinator on Master",
     "command": "githubinator",
     "args": { "permalink": false, "branch": "master" }
