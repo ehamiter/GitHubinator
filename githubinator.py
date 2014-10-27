@@ -20,7 +20,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             DEFAULT_GITHUB_HOST = "github.com"
 
 
-    def run(self, edit, permalink = False, mode = 'blob', branch = None):
+    def run(self, edit, copyonly = False, permalink = False, mode = 'blob', branch = None):
         self.load_config()
         if not self.view.file_name():
             return
@@ -76,7 +76,8 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             sublime.set_clipboard(full_link)
             sublime.status_message('Copied %s to clipboard.' % full_link)
             print('Copied %s to clipboard.' % full_link)
-            self.view.window().run_command('open_url', {"url": full_link})
+            if not copyonly:
+                self.view.window().run_command('open_url', {"url": full_link})
             break
 
 
