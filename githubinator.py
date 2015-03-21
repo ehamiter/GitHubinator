@@ -5,20 +5,25 @@ import sublime_plugin
 
 
 class GithubinatorCommand(sublime_plugin.TextCommand):
-    '''This will allow you to highlight your code, activate the plugin, then see the
-    highlighted results on GitHub.
+    '''
+    This will allow you to highlight your code, activate the plugin, then see the
+    highlighted results on GitHub/Bitbucket.
     '''
 
     def load_config(self):
         s = sublime.load_settings("Githubinator.sublime-settings")
-        global DEFAULT_GIT_REMOTE, DEFAULT_GITHUB_HOST
+        global DEFAULT_GIT_REMOTE, DEFAULT_HOST
+
         DEFAULT_GIT_REMOTE = s.get("default_remote")
+        if DEFAULT_GIT_REMOTE is None:
+            DEFAULT_GIT_REMOTE = ["origin"]
+
         if not isinstance(DEFAULT_GIT_REMOTE, list):
             DEFAULT_GIT_REMOTE = [DEFAULT_GIT_REMOTE]
-        DEFAULT_GITHUB_HOST = s.get("default_host")
-        if DEFAULT_GITHUB_HOST is None:
-            DEFAULT_GITHUB_HOST = "github.com"
 
+        DEFAULT_HOST = s.get("default_host")
+        if DEFAULT_HOST is None:
+            DEFAULT_HOST = "github.com"
 
     def run(self, edit, copyonly=False, permalink=False, mode='blob', branch=None):
         self.load_config()
@@ -50,24 +55,37 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             matches = result.groups()
             if matches[0]:
                 HTTP = matches[1]
-                DEFAULT_GITHUB_HOST = matches[2]
+                DEFAULT_HOST = matches[2]
             else:
-                DEFAULT_GITHUB_HOST = matches[4]
-        
-        re_host = re.escape(DEFAULT_GITHUB_HOST)
+                DEFAULT_HOST = matches[4]
+
+        re_host = re.escape(DEFAULT_HOST)
+
         for remote in DEFAULT_GIT_REMOTE:
 
             regex = r'.*\s.*(?:https?://%s/|%s:|git://%s/)(.*)/(.*?)(?:\.git)?\r?\n' % (re_host, re_host, re_host)
             result = re.search(remote + regex, config)
             if not result:
                 continue
-            matches = result.groups()
 
             sha, branch = self.get_git_status(git_path)
             target = sha if permalink else branch
 
-            full_link = HTTP + '://%s/%s/%s/%s/%s%s/%s#L%s' % \
-                (DEFAULT_GITHUB_HOST, matches[0], matches[1], mode, target, new_git_path, file_name, lines)
+            matches = result.groups()
+            username = matches[0]
+            project = matches[1]
+
+            lines = self.get_selected_line_nums()
+
+            if 'bitbucket' in DEFAULT_HOST:
+                full_link = HTTP + '://%s/%s/%s/src/%s%s/%s?at=%s#cl-%s' % \
+                    (DEFAULT_HOST, username, project, sha, new_git_path,
+                        file_name, branch, lines)
+            else:
+                full_link = HTTP + '://%s/%s/%s/%s/%s%s/%s#L%s' % \
+                    (DEFAULT_HOST, username, project, mode, target, new_git_path,
+                        file_name, lines)
+
             sublime.set_clipboard(full_link)
             sublime.status_message('Copied %s to clipboard.' % full_link)
 
