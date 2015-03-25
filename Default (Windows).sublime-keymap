@@ -1,0 +1,4 @@
+[
+    { "keys": ["ctrl+\\"], "command": "githubinator", "args" : { "permalink": false }},
+    { "keys": ["shift+ctrl+\\"], "command": "githubinator", "args" : { "permalink": true }}
+]
