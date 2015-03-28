@@ -113,8 +113,18 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         with open(os.path.join(git_path, '.git', 'HEAD'), "r") as f:
             ref = f.read().replace('ref: ', '')[:-1]
 
-        with open(os.path.join(git_path, '.git', ref), "r") as f:
-            sha = f.read()[:-1]
+        sha = None
+        packed_ref_path = os.path.join(git_path, '.git', 'packed-refs')
+
+        if os.path.isfile(packed_ref_path):
+            with open(packed_ref_path, "r") as f:
+                for line in f:
+                    if ref in line:
+                        sha = line.split(" ")[0]
+
+        if not sha:
+            with open(os.path.join(git_path, '.git', ref), "r") as f:
+                sha = f.read()[:-1]
 
         branch = ref.replace('refs/heads/', '')
 
