@@ -68,7 +68,9 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             if not result:
                 continue
 
-            sha, branch = self.get_git_status(git_path)
+            sha, current_branch = self.get_git_status(git_path)
+            if not branch:
+                branch = current_branch
             target = sha if permalink else branch
 
             matches = result.groups()
