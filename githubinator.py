@@ -1,3 +1,4 @@
+import codecs
 import os
 import re
 import sublime
@@ -116,7 +117,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         packed_ref_path = os.path.join(git_path, '.git', 'packed-refs')
 
         if os.path.isfile(packed_ref_path):
-            with open(packed_ref_path, "r") as f:
+            with codecs.open(packed_ref_path, "r", "utf-8") as f:
                 for line in f:
                     if ref in line:
                         sha = line.split(" ")[0]
