@@ -2,7 +2,7 @@
 
 *_With regards to [Dr. Heinz Doofenshmirtz](http://en.wikipedia.org/wiki/Dr._Heinz_Doofenshmirtz)_
 
-This will allow you to select text in a Sublime Text 2 file, and see the highlighted lines on GitHub's remote repo, if one exists.
+This will allow you to select text in a Sublime Text file, and see the highlighted lines on GitHub's remote repo, if one exists.
 
 ![Screenshot](http://i.imgur.com/lcJ78.png)
 
@@ -11,7 +11,7 @@ This will allow you to select text in a Sublime Text 2 file, and see the highlig
 
 If you use [Package Control](http://wbond.net/sublime_packages/package_control), just install it from there. If not:
 
-Clone this repo to your Sublime Text 2 Packages folder:
+Clone this repo to your Sublime Text Packages folder (ST2 example shown below):
 
     cd ~/"Library/Application Support/Sublime Text 2/Packages/"
     git clone https://github.com/ehamiter/ST2-GitHubinator.git
