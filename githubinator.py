@@ -78,11 +78,13 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             lines = self.get_selected_line_nums()
 
             if 'bitbucket' in self.default_host:
+                lines = '-'.join(lines)
                 full_link = HTTP + '://%s/%s/%s/src/%s%s/%s?at=%s#cl-%s' % \
                     (self.default_host, username, project, sha, new_git_path,
                         file_name, branch, lines)
             else:
-                full_link = HTTP + '://%s/%s/%s/%s/%s%s/%s#L%s' % \
+                lines = '-'.join('L%s' % line for line in lines)
+                full_link = HTTP + '://%s/%s/%s/%s/%s%s/%s#%s' % \
                     (self.default_host, username, project, mode, target, new_git_path,
                         file_name, lines)
 
@@ -101,9 +103,9 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         end_line = self.view.rowcol(sel.end())[0] + 1
 
         if begin_line == end_line:
-            lines = begin_line
+            lines = [begin_line]
         else:
-            lines = '%s-%s' % (begin_line, end_line)
+            lines = [begin_line, end_line]
 
         return lines
 
