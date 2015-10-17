@@ -59,17 +59,27 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
         re_host = re.escape(self.default_host)
 
-        for remote in self.default_remote:
+        sha, current_branch = self.get_git_status(git_path)
+        if not branch:
+            branch = current_branch
+
+        target = sha if permalink else branch
+
+        detected_remote = None
+        regex = r'.*\s.*(?:remote = )(\w+?)\r?\n'
+        result = re.search(branch + regex, config)
+
+        if result:
+            matches = result.groups()
+            detected_remote = [matches[0]]
+
+        for remote in (detected_remote or self.default_remote):
 
             regex = r'.*\s.*(?:https?://%s/|%s:|git://%s/)(.*)/(.*?)(?:\.git)?\r?\n' % (re_host, re_host, re_host)
             result = re.search(remote + regex, config)
             if not result:
                 continue
 
-            sha, current_branch = self.get_git_status(git_path)
-            if not branch:
-                branch = current_branch
-            target = sha if permalink else branch
 
             matches = result.groups()
             username = matches[0]
