@@ -41,6 +41,11 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
         new_git_path = folder_name[len(git_path):]
 
+        # path names normalize for UNC styling
+        if os.name == 'nt':
+            new_git_path = new_git_path.replace('\\', '/')
+            file_name = file_name.replace('\\', '/')
+
         # Read the config file in .git
         git_config_path = os.path.join(git_path, '.git', 'config')
         with open(git_config_path, "r") as git_config_file:
