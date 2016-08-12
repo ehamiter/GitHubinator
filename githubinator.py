@@ -3,6 +3,8 @@ import os
 import re
 import sublime
 import sublime_plugin
+import urllib
+
 
 
 class GithubinatorCommand(sublime_plugin.TextCommand):
@@ -68,6 +70,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             branch = current_branch
 
         target = sha if permalink else branch
+        target = urllib.parse.quote_plus(target)
 
         detected_remote = None
         regex = r".*\s.*(?:remote = )(\w+?)\r?\n"
