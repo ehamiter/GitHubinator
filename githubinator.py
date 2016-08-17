@@ -3,8 +3,12 @@ import os
 import re
 import sublime
 import sublime_plugin
-import urllib
 
+# The urllib module has been split into parts and renamed in Python 3 to urllib.parse
+try:
+    from urllib.parse import quote_plus
+except ImportError:
+    from urllib import quote_plus
 
 
 class GithubinatorCommand(sublime_plugin.TextCommand):
@@ -70,7 +74,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             branch = current_branch
 
         target = sha if permalink else branch
-        target = urllib.parse.quote_plus(target)
+        target = quote_plus(target)
 
         detected_remote = None
         regex = r".*\s.*(?:remote = )(\w+?)\r?\n"
