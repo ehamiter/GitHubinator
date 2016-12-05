@@ -1,8 +1,6 @@
 # GitHubinator*
 *_With regards to [Dr. Heinz Doofenshmirtz](http://en.wikipedia.org/wiki/Dr._Heinz_Doofenshmirtz)_
 
-[![git-brag-stats](https://labs.turbo.run/git-brag?user=ehamiter&repo=GitHubinator)](https://github.com/turbo/git-brag)  
-
 This will allow you to select text in a Sublime Text file, and see the highlighted lines on GitHub's remote repo, if one exists.
 
 ![Screenshot](http://i.imgur.com/lcJ78.png)
