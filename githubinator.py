@@ -142,9 +142,13 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         if os.path.isfile(packed_ref_path):
             with codecs.open(packed_ref_path, "r", "utf-8") as f:
                 regex = r"\s{0}(\s.*)?$".format(ref)
-                for line in f:
-                    if re.search(regex, line):
-                        sha = line.split(" ")[0]
+                try:
+                    for line in f:
+                        if re.search(regex, line):
+                            sha = line.split(" ")[0]
+                except UnicodeDecodeError:
+                    None
+
 
         if not sha:
             with open(os.path.join(git_path, ".git", ref), "r") as f:
