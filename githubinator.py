@@ -53,7 +53,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
         # Read the config file in .git
         git_config_path = os.path.join(git_path, ".git", "config")
-        with open(git_config_path, "r") as git_config_file:
+        with open(git_config_path, "r", encoding="utf-8") as git_config_file:
             config = git_config_file.read()
 
         # Figure out the host
