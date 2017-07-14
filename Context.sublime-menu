@@ -1,11 +1,16 @@
 [
-    { "command": "githubinator", "caption": "GitHubinator", "args": { "permalink": false } },
-    { "command": "githubinator", "caption": "Copy GitHubinator...", "args": { "permalink": false, "copyonly": true } },
-    { "command": "githubinator", "caption": "Copy GitHubinator on Master...", "args": { "permalink": false, "copyonly": true, "branch": "master" } },
-    { "command": "githubinator", "caption": "Copy GitHubinator Permalink...", "args": { "permalink": true, "copyonly": true } },
-    { "command": "githubinator", "caption": "GitHubinator on Master", "args": { "permalink": false, "branch": "master" } },
-    { "command": "githubinator", "caption": "GitHubinator Permalink", "args": { "permalink": true } },
-    { "command": "githubinator", "caption": "GitHubinator Blame", "args": { "permalink": false, "mode": "blame" } },
-    { "command": "githubinator", "caption": "GitHubinator Blame on Master", "args": { "permalink": false, "mode": "blame", "branch": "master" } },
-    { "command": "githubinator", "caption": "GitHubinator Blame Permalink", "args": { "permalink": true, "mode": "blame" } }
+    {
+        "caption": "GitHubinator",
+        "children": [
+            { "caption": "Open", "command": "githubinator", "args": { "permalink": false } },
+            { "caption": "Open on Master", "command": "githubinator", "args": { "permalink": false, "branch": "master" } },
+            { "caption": "Open permalink", "command": "githubinator", "args": { "permalink": true } },
+            { "caption": "Copy link", "command": "githubinator", "args": { "permalink": false, "copyonly": true } },
+            { "caption": "Copy link on Master", "command": "githubinator", "args": { "permalink": false, "copyonly": true, "branch": "master" } },
+            { "caption": "Copy permalink", "command": "githubinator", "args": { "permalink": true, "copyonly": true } },
+            { "caption": "Open blame", "command": "githubinator", "args": { "permalink": false, "mode": "blame" } },
+            { "caption": "Open blame on Master", "command": "githubinator", "args": { "permalink": false, "mode": "blame", "branch": "master" } },
+            { "caption": "Open blame permalink", "command": "githubinator", "args": { "permalink": true, "mode": "blame" } }
+        ]
+    }
 ]
