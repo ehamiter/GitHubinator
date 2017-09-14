@@ -33,5 +33,10 @@
     "caption": "GitHubinator Blame Permalink",
     "command": "githubinator",
     "args": { "permalink": true, "mode": "blame" }
+  },
+  {
+    "caption": "GitHubinator Repository",
+    "command": "githubinator",
+    "args": { "permalink": false, "open_repo": true }
   }
 ]
