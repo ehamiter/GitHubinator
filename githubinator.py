@@ -28,7 +28,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
         self.default_host = s.get("default_host") or self.DEFAULT_HOST
 
-    def run(self, edit, copyonly=False, permalink=False, mode="blob", branch=None):
+    def run(self, edit, copyonly=False, permalink=False, mode="blob", branch=None, open_repo=False):
         self.load_config()
 
         if not self.view.file_name():
@@ -97,17 +97,20 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
             lines = self.get_selected_line_nums()
 
-            if "bitbucket" in self.default_host:
-                mode = "src" if mode == "blob" else "annotate"
-                lines = ":".join([str(l) for l in lines])
-                full_link = scheme + "://%s/%s/%s/%s/%s%s/%s?at=%s#cl-%s" % \
-                    (self.default_host, username, project, mode, sha, new_git_path,
-                        file_name, branch, lines)
+            repo_link = scheme + "://%s/%s/%s/" % (self.default_host, username, project)
+
+            if open_repo:
+                full_link = repo_link
             else:
-                lines = "-".join("L%s" % line for line in lines)
-                full_link = scheme + "://%s/%s/%s/%s/%s%s/%s#%s" % \
-                    (self.default_host, username, project, mode, target, new_git_path,
-                        file_name, lines)
+                if "bitbucket" in self.default_host:
+                    mode = "src" if mode == "blob" else "annotate"
+                    lines = ":".join([str(l) for l in lines])
+                    full_link = repo_link + "%s/%s%s/%s?at=%s#cl-%s" % \
+                        (mode, sha, new_git_path, file_name, branch, lines)
+                else:
+                    lines = "-".join("L%s" % line for line in lines)
+                    full_link = repo_link + "%s/%s%s/%s#%s" % \
+                        (mode, target, new_git_path, file_name, lines)
 
             sublime.set_clipboard(full_link)
             sublime.status_message("Copied %s to clipboard." % full_link)

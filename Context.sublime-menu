@@ -11,6 +11,7 @@
             { "caption": "Open blame", "command": "githubinator", "args": { "permalink": false, "mode": "blame" } },
             { "caption": "Open blame on Master", "command": "githubinator", "args": { "permalink": false, "mode": "blame", "branch": "master" } },
             { "caption": "Open blame permalink", "command": "githubinator", "args": { "permalink": true, "mode": "blame" } }
+            { "caption": "Open repository", "command": "githubinator", "args": { "permalink": false, "open_repo": true } },
         ]
     }
 ]
