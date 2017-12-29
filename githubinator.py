@@ -6,9 +6,9 @@ import sublime_plugin
 
 # The urllib module has been split into parts and renamed in Python 3 to urllib.parse
 try:
-    from urllib.parse import quote_plus
+    from urllib.parse import quote, quote_plus
 except ImportError:
-    from urllib import quote_plus
+    from urllib import quote, quote_plus
 
 
 class GithubinatorCommand(sublime_plugin.TextCommand):
@@ -111,6 +111,8 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                     lines = "-".join("L%s" % line for line in lines)
                     full_link = repo_link + "%s/%s%s/%s#%s" % \
                         (mode, target, new_git_path, file_name, lines)
+
+            full_link = quote(full_link, safe=':/#')
 
             sublime.set_clipboard(full_link)
             sublime.status_message("Copied %s to clipboard." % full_link)
