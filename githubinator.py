@@ -105,8 +105,8 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                 if "bitbucket" in self.default_host:
                     mode = "src" if mode == "blob" else "annotate"
                     lines = ":".join([str(l) for l in lines])
-                    full_link = repo_link + "%s/%s%s/%s?at=%s#cl-%s" % \
-                        (mode, sha, new_git_path, file_name, branch, lines)
+                    full_link = repo_link + "%s/%s%s/%s#cl-%s" % \
+                        (mode, sha, new_git_path, file_name, lines)
                 else:
                     lines = "-".join("L%s" % line for line in lines)
                     full_link = repo_link + "%s/%s%s/%s#%s" % \
