@@ -74,7 +74,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             branch = current_branch
 
         target = sha if permalink else branch
-        target = quote_plus(target)
+        target = quote_plus(target, safe="/")
 
         detected_remote = None
         regex = r".*\s.*(?:remote = )(\w+?)\r?\n"
