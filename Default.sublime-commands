@@ -10,6 +10,21 @@
     "args": { "copyonly": true }
   },
   {
+    "caption": "Copy GitHubinator master...",
+    "command": "githubinator",
+    "args": { "copyonly": true, "branch": "master", "permalink": false }
+  },
+  {
+    "caption": "Copy GitHubinator permalink...",
+    "command": "githubinator",
+    "args": { "copyonly": true, "permalink": true }
+  },
+  {
+    "caption": "Copy GitHubinator master permalink...",
+    "command": "githubinator",
+    "args": { "copyonly": true, "branch": "master", "permalink": true }
+  },
+  {
     "caption": "GitHubinator on Master",
     "command": "githubinator",
     "args": { "permalink": false, "branch": "master" }
