@@ -112,7 +112,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                     full_link = repo_link + "%s/%s%s/%s#%s" % \
                         (mode, target, new_git_path, file_name, lines)
 
-            full_link = quote(full_link, safe=':/#')
+            full_link = quote(full_link, safe=':/#@')
 
             sublime.set_clipboard(full_link)
             sublime.status_message("Copied %s to clipboard." % full_link)
