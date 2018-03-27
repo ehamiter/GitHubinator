@@ -1,4 +1,5 @@
 {
   "default_remote": "origin",
-  "default_host": "github.com"
+  "default_host": "github.com",
+  "force_branch": false
 }

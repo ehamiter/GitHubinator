@@ -24,7 +24,10 @@ The defaults should work for most setups, but if you have a different remote nam
 
     {
       "default_remote": "origin",
-      "default_host": "github.com"
+      "default_host": "github.com",
+
+      // (optional) override remote branch name; `false` = auto-detect
+      "force_branch": false 
     }
 
 

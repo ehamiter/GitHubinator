@@ -18,6 +18,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
     """
     DEFAULT_GIT_REMOTE = "origin"
     DEFAULT_HOST = "github.com"
+    FORCE_BRANCH = False
 
     def load_config(self):
         s = sublime.load_settings("Githubinator.sublime-settings")
@@ -27,6 +28,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             self.default_remote = [self.default_remote]
 
         self.default_host = s.get("default_host") or self.DEFAULT_HOST
+        self.force_branch = s.get("force_branch") or self.FORCE_BRANCH
 
     def run(self, edit, copyonly=False, permalink=False, mode="blob", branch=None, open_repo=False):
         self.load_config()
@@ -68,6 +70,9 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                 self.default_host = matches[4]
 
         re_host = re.escape(self.default_host)
+
+        if self.force_branch:
+          branch = self.force_branch
 
         sha, current_branch = self.get_git_status(git_path)
         if not branch:
