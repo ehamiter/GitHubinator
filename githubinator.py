@@ -73,16 +73,18 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         if not branch:
             branch = current_branch
 
-        target = sha if permalink else branch
+        target = sha if permalink or branch is None else branch
         target = quote_plus(target, safe="/")
 
         detected_remote = None
-        regex = r".*\s.*(?:remote = )(\w+?)\r?\n"
-        result = re.search(branch + regex, config)
+        # we can only do this search when we have a branch to work with.
+        if branch is not None:
+            regex = r".*\s.*(?:remote = )(\w+?)\r?\n"
+            result = re.search(branch + regex, config)
 
-        if result:
-            matches = result.groups()
-            detected_remote = [matches[0]]
+            if result:
+                matches = result.groups()
+                detected_remote = [matches[0]]
 
         for remote in (detected_remote or self.default_remote):
 
@@ -137,6 +139,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
     @staticmethod
     def get_git_status(git_path):
+        # type: (str) -> (str, Optional[str])
         """Get the current branch and SHA from git."""
 
         with open(os.path.join(git_path, ".git", "HEAD"), "r") as f:
@@ -155,7 +158,11 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                 except UnicodeDecodeError:
                     None
 
-
+        if not ref.startswith('refs/'):
+            # we are in detached head mode and ref will be
+            # `26e7c31036641177fa929e5a3ae925f214b23ed9`, instead of
+            # `ref/heads/master`. So we're returning the sha when we return ref.
+            return ref, None
         if not sha:
             with open(os.path.join(git_path, ".git", ref), "r") as f:
                 sha = f.read()[:-1]
