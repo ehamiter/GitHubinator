@@ -10,10 +10,10 @@ This will allow you to select text in a Sublime Text file, and see the highlight
 
 If you use [Package Control](http://wbond.net/sublime_packages/package_control), just install it from there. If not:
 
-Clone this repo to your Sublime Text Packages folder (ST2 example shown below):
+Clone this repo to your Sublime Text Packages folder (ST3 example shown below):
 
-    cd ~/"Library/Application Support/Sublime Text 2/Packages/"
-    git clone https://github.com/ehamiter/ST2-GitHubinator.git
+    cd ~/"Library/Application Support/Sublime Text 3/Packages/"
+    git clone https://github.com/ehamiter/GitHubinator.git
 
 The plugin should be picked up automatically. If not, restart Sublime Text.
 
