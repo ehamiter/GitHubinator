@@ -51,13 +51,13 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             relative_git_path = relative_git_path.replace("\\", "/")
             file_name = file_name.replace("\\", "/")
 
-        is_git_submodule = not os.path.isdir(os.path.join(git_path, '.git'))
+        is_git_submodule = not os.path.isdir(os.path.join(git_path, ".git"))
         # Read the config file in .git
         if not is_git_submodule:
             git_config_path = os.path.join(git_path, ".git", "config")
         else:
             # we're in a submodule!
-            with codecs.open(os.path.join(git_path, '.git'), "r", "utf-8") as git_submodule_file:
+            with codecs.open(os.path.join(git_path, ".git"), "r", "utf-8") as git_submodule_file:
                 # we need to get the link to the git folder from the .git file
                 git_submodule = git_submodule_file.read()
                 result = re.search(r"^gitdir: (.*) *$", git_submodule)
@@ -175,7 +175,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         return sha, branch
 
     def get_ref(self, git_path):
-        if '.git/modules' not in git_path:
+        if ".git/modules" not in git_path:
             head_path = os.path.join(git_path, ".git", "HEAD")
         else:
             head_path = os.path.join(git_path, "HEAD")
@@ -192,7 +192,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         # pack-refs with: peeled fully-peeled sorted
         0252a960f3cb3d93f1d080539f5be92efbc41200 refs/remotes/origin/master
         """
-        if '.git/modules' not in git_path:
+        if ".git/modules" not in git_path:
             packed_ref_path = os.path.join(git_path, ".git", "packed-refs")
         else:
             packed_ref_path = os.path.join(git_path, "packed-refs")
@@ -209,7 +209,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                 pass
 
     def get_sha_from_ref(self, git_path, ref):
-        if '.git/modules' not in git_path:
+        if ".git/modules" not in git_path:
             ref_path = os.path.join(git_path, ".git", ref)
         else:
             ref_path = os.path.join(git_path, ref)
