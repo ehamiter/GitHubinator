@@ -232,7 +232,13 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         return self.recurse_dir(dirname, folder)
 
     def is_enabled(self):
-        if self.view.file_name() and len(self.view.file_name()) > 0:
+        """Enable command only for files under git repos."""
+        full_name = os.path.realpath(self.view.file_name())
+        if not full_name:
+            return False
+
+        git_path = self.recurse_dir(os.path.dirname(full_name), ".git")
+        if git_path:
             return True
         else:
             return False
