@@ -55,7 +55,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
         is_linked_git = not os.path.isdir(git_dir)
         if is_linked_git:
-            # we're in a linked Git repo (a submodule)
+            # we're in a linked Git repo (either a submodule or a worktree)
             with codecs.open(os.path.join(git_dir), "r", "utf-8") as git_link_file:
                 # we need to get the link to the git folder from the .git file
                 result = re.search(r"^gitdir: (.*) *$", git_link_file.read())
@@ -63,7 +63,12 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                     matches = result.groups()
                     if matches[0]:
                         linked_path = matches[0]
-                        git_dir = os.path.join(git_worktree, linked_path)
+                        if os.path.isabs(linked_path):
+                            git_dir = linked_path
+                        else:
+                            git_dir = os.path.join(git_worktree, linked_path)
+                        if git_dir.find("/.git/worktrees/"):
+                            git_dir = re.sub(r'/.git/worktrees/[^/]+$', '/.git', git_dir)
 
         # Read the config file in .git
         git_config_path = os.path.join(git_dir, "config")
