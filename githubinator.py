@@ -39,34 +39,34 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         folder_name, file_name = os.path.split(full_name)
 
         # Try to find a git directory
-        git_path = self.recurse_dir(folder_name, ".git")
-        if not git_path:
+        git_worktree = self.recurse_dir(folder_name, ".git")
+        if not git_worktree:
             sublime.status_message("Could not find .git directory.")
             return
 
-        relative_git_path = folder_name[len(git_path):]
+        relative_git_worktree = folder_name[len(git_worktree):]
 
         # path names normalize for UNC styling
         if os.name == "nt":
-            relative_git_path = relative_git_path.replace("\\", "/")
+            relative_git_worktree = relative_git_worktree.replace("\\", "/")
             file_name = file_name.replace("\\", "/")
 
-        is_git_submodule = not os.path.isdir(os.path.join(git_path, ".git"))
-        # Read the config file in .git
-        if not is_git_submodule:
-            git_config_path = os.path.join(git_path, ".git", "config")
-        else:
-            # we're in a submodule!
-            with codecs.open(os.path.join(git_path, ".git"), "r", "utf-8") as git_submodule_file:
+        git_dir = os.path.join(git_worktree, ".git")
+
+        is_linked_git = not os.path.isdir(git_dir)
+        if is_linked_git:
+            # we're in a linked Git repo (a submodule)
+            with codecs.open(os.path.join(git_dir), "r", "utf-8") as git_link_file:
                 # we need to get the link to the git folder from the .git file
-                git_submodule = git_submodule_file.read()
-                result = re.search(r"^gitdir: (.*) *$", git_submodule)
+                result = re.search(r"^gitdir: (.*) *$", git_link_file.read())
                 if result:
                     matches = result.groups()
                     if matches[0]:
-                        git_path = os.path.join(git_path, matches[0])
-                        git_config_path = os.path.join(git_path, "config")
+                        linked_path = matches[0]
+                        git_dir = os.path.join(git_worktree, linked_path)
 
+        # Read the config file in .git
+        git_config_path = os.path.join(git_dir, "config")
         with codecs.open(git_config_path, "r", "utf-8") as git_config_file:
             config = git_config_file.read()
 
@@ -85,7 +85,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
         re_host = re.escape(self.default_host)
 
-        sha, current_branch = self.get_git_status(git_path)
+        sha, current_branch = self.get_git_status(git_dir)
         if not branch:
             branch = current_branch
 
@@ -124,11 +124,11 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                     mode = "src" if mode == "blob" else "annotate"
                     lines = ":".join([str(l) for l in lines])
                     full_link = repo_link + "%s/%s%s/%s#cl-%s" % \
-                        (mode, sha, relative_git_path, file_name, lines)
+                        (mode, sha, relative_git_worktree, file_name, lines)
                 else:
                     lines = "-".join("L%s" % line for line in lines)
                     full_link = repo_link + "%s/%s%s/%s#%s" % \
-                        (mode, target, relative_git_path, file_name, lines)
+                        (mode, target, relative_git_worktree, file_name, lines)
 
             full_link = quote(full_link, safe=':/#@')
 
@@ -153,12 +153,12 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
         return lines
 
-    def get_git_status(self, git_path):
+    def get_git_status(self, git_dir):
         """Get the current branch and SHA from git.
 
         type: (str) -> (str, Optional[str])
         """
-        ref = self.get_ref(git_path)
+        ref = self.get_ref(git_dir)
 
         if not ref.startswith('refs/'):
             # we are in detached head mode and ref will be
@@ -166,24 +166,21 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             # `ref/heads/master`. So we're returning the sha when we return ref.
             return ref, None
 
-        sha = self.get_sha_from_packed_refs(git_path, ref)
+        sha = self.get_sha_from_packed_refs(git_dir, ref)
         if not sha:
-            sha = self.get_sha_from_ref(git_path, ref)
+            sha = self.get_sha_from_ref(git_dir, ref)
 
         branch = ref.replace("refs/heads/", "")
 
         return sha, branch
 
-    def get_ref(self, git_path):
-        if ".git/modules" not in git_path:
-            head_path = os.path.join(git_path, ".git", "HEAD")
-        else:
-            head_path = os.path.join(git_path, "HEAD")
+    def get_ref(self, git_dir):
+        head_path = os.path.join(git_dir, "HEAD")
         with open(head_path, "r") as f:
             # Something like "ref: refs/heads/master"
             return f.read().replace("ref: ", "")[:-1]
 
-    def get_sha_from_packed_refs(self, git_path, ref):
+    def get_sha_from_packed_refs(self, git_dir, ref):
         """Get a sha from `.git/packed-refs`, useful if `.git/HEAD` is a tag
 
         `.git/packed-refs` is a list of commit hashes and their refs
@@ -192,10 +189,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         # pack-refs with: peeled fully-peeled sorted
         0252a960f3cb3d93f1d080539f5be92efbc41200 refs/remotes/origin/master
         """
-        if ".git/modules" not in git_path:
-            packed_ref_path = os.path.join(git_path, ".git", "packed-refs")
-        else:
-            packed_ref_path = os.path.join(git_path, "packed-refs")
+        packed_ref_path = os.path.join(git_dir, "packed-refs")
 
         if not os.path.isfile(packed_ref_path):
             return None
@@ -208,11 +202,8 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             except UnicodeDecodeError:
                 pass
 
-    def get_sha_from_ref(self, git_path, ref):
-        if ".git/modules" not in git_path:
-            ref_path = os.path.join(git_path, ".git", ref)
-        else:
-            ref_path = os.path.join(git_path, ref)
+    def get_sha_from_ref(self, git_dir, ref):
+        ref_path = os.path.join(git_dir, ref)
         with open(ref_path, "r") as f:
             return f.read().strip()
 
