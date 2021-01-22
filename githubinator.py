@@ -1,6 +1,7 @@
 import codecs
 import os
 import re
+
 import sublime
 import sublime_plugin
 
@@ -130,6 +131,10 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                     lines = ":".join([str(l) for l in lines])
                     full_link = repo_link + "%s/%s%s/%s#cl-%s" % \
                         (mode, sha, relative_git_worktree, file_name, lines)
+                elif "gitlab" in self.default_host:
+                    lines = "-".join("%s" % line for line in lines)
+                    full_link = repo_link + "%s/%s%s/%s#L%s" % \
+                        (mode, target, relative_git_worktree, file_name, lines)
                 else:
                     lines = "-".join("L%s" % line for line in lines)
                     full_link = repo_link + "%s/%s%s/%s#%s" % \
