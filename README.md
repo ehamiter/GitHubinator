@@ -27,6 +27,29 @@ The defaults should work for most setups, but if you have a different remote nam
       "default_host": "github.com"
     }
 
+To change the branch name, edit `Default.sublime-commands`.
+
+For example, to change the branch name from `master` to `main`, edit the following as such:
+
+From:
+
+```
+  {
+    "caption": "GitHubinator Blame on Master",
+    "command": "githubinator",
+    "args": { "permalink": false, "mode": "blame", "branch": "master" }
+  },
+```
+
+To:
+
+```
+  {
+    "caption": "GitHubinator Blame on Main",
+    "command": "githubinator",
+    "args": { "permalink": false, "mode": "blame", "branch": "main" }
+  },
+```
 
 ## Usage
 
