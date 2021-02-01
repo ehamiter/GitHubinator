@@ -153,8 +153,14 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
     def get_selected_line_nums(self):
         """Get the line number of selections."""
         sel = self.view.sel()[0]
-        begin_line = self.view.rowcol(sel.begin())[0] + 1
-        end_line = self.view.rowcol(sel.end())[0] + 1
+        begin = self.view.rowcol(sel.begin())
+        end = self.view.rowcol(sel.end())
+
+        begin_line = begin[0] + 1
+
+        # If the column index of the end of the selection is 0, that means the user has selected up to and including the EOL character
+        # We don't want to increment `end_line` in that case, because it will highlight the line after the EOL character.
+        end_line = end[0] + 1 if end[1] != 0 else end[0]
 
         if begin_line == end_line:
             lines = [begin_line]
