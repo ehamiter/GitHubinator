@@ -158,9 +158,10 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
         begin_line = begin[0] + 1
 
-        # If the column index of the end of the selection is 0, that means the user has selected up to and including the EOL character
+        # Unless both regions are the same (meaning nothing is highlighted),
+        # if the column index of the end of the selection is 0, that means the user has selected up to and including the EOL character
         # We don't want to increment `end_line` in that case, because it will highlight the line after the EOL character.
-        end_line = end[0] + 1 if end[1] != 0 else end[0]
+        end_line = end[0] + 1 if (begin == end) or end[1] != 0 else end[0]
 
         if begin_line == end_line:
             lines = [begin_line]
@@ -182,9 +183,9 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             # `ref/heads/master`. So we're returning the sha when we return ref.
             return ref, None
 
-        sha = self.get_sha_from_packed_refs(git_dir, ref)
+        sha = self.get_sha_from_ref(git_dir, ref)
         if not sha:
-            sha = self.get_sha_from_ref(git_dir, ref)
+            sha = self.get_sha_from_packed_refs(git_dir, ref)
 
         branch = ref.replace("refs/heads/", "")
 
@@ -220,6 +221,8 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
     def get_sha_from_ref(self, git_dir, ref):
         ref_path = os.path.join(git_dir, ref)
+        if not os.path.isfile(ref_path):
+            return None
         with open(ref_path, "r") as f:
             return f.read().strip()
 
