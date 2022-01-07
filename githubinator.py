@@ -182,9 +182,9 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             # `ref/heads/master`. So we're returning the sha when we return ref.
             return ref, None
 
-        sha = self.get_sha_from_packed_refs(git_dir, ref)
+        sha = self.get_sha_from_ref(git_dir, ref)
         if not sha:
-            sha = self.get_sha_from_ref(git_dir, ref)
+            sha = self.get_sha_from_packed_refs(git_dir, ref)
 
         branch = ref.replace("refs/heads/", "")
 
