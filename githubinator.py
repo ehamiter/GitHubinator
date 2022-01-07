@@ -220,6 +220,8 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
     def get_sha_from_ref(self, git_dir, ref):
         ref_path = os.path.join(git_dir, ref)
+        if not os.path.isfile(ref_path):
+            return None
         with open(ref_path, "r") as f:
             return f.read().strip()
 
