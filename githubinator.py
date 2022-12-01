@@ -19,6 +19,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
     """
     DEFAULT_GIT_REMOTE = "origin"
     DEFAULT_HOST = "github.com"
+    DEFAULT_BRANCH = "master"
 
     def load_config(self):
         settings = sublime.load_settings("Githubinator.sublime-settings")
@@ -28,9 +29,11 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             self.default_remote = [self.default_remote]
 
         self.default_host = settings.get("default_host") or self.DEFAULT_HOST
+        self.default_branch = settings.get("default_branch") or self.DEFAULT_BRANCH
 
-    def run(self, edit, copyonly=False, permalink=False, mode="blob", branch=None, open_repo=False):
+    def run(self, edit, copyonly=False, permalink=False, mode="blob", default_branch=False, open_repo=False):
         self.load_config()
+        branch = self.default_branch if default_branch else None
 
         if not self.view.file_name():
             return

@@ -10,9 +10,9 @@
     "args": { "copyonly": true }
   },
   {
-    "caption": "Copy GitHubinator master...",
+    "caption": "Copy GitHubinator default branch...",
     "command": "githubinator",
-    "args": { "copyonly": true, "branch": "master", "permalink": false }
+    "args": { "copyonly": true, "default_branch": true, "permalink": false }
   },
   {
     "caption": "Copy GitHubinator permalink...",
@@ -20,14 +20,14 @@
     "args": { "copyonly": true, "permalink": true }
   },
   {
-    "caption": "Copy GitHubinator master permalink...",
+    "caption": "Copy GitHubinator default branch permalink...",
     "command": "githubinator",
-    "args": { "copyonly": true, "branch": "master", "permalink": true }
+    "args": { "copyonly": true, "default_branch": true, "permalink": true }
   },
   {
-    "caption": "GitHubinator on Master",
+    "caption": "GitHubinator on Default Branch",
     "command": "githubinator",
-    "args": { "permalink": false, "branch": "master" }
+    "args": { "permalink": false, "default_branch": true }
   },
   {
     "caption": "GitHubinator Permalink",
@@ -40,9 +40,9 @@
     "args": { "permalink": false, "mode": "blame" }
   },
   {
-    "caption": "GitHubinator Blame on Master",
+    "caption": "GitHubinator Blame on Default Branch",
     "command": "githubinator",
-    "args": { "permalink": false, "mode": "blame", "branch": "master" }
+    "args": { "permalink": false, "mode": "blame", "default_branch": true }
   },
   {
     "caption": "GitHubinator Blame Permalink",
