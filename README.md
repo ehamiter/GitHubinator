@@ -20,36 +20,13 @@ The plugin should be picked up automatically. If not, restart Sublime Text.
 
 ## Configuration
 
-The defaults should work for most setups, but if you have a different remote name or use GitHub Enterprise, you can configure remote and host in the `Githubinator.sublime-settings` file:
+The defaults should work for most setups, but if you have a different remote name, use GitHub Enterprise or default branch, you can configure remote, host, and default branch in the `Githubinator.sublime-settings` file:
 
     {
       "default_remote": "origin",
-      "default_host": "github.com"
+      "default_host": "github.com",
+      "default_branch": "master"
     }
-
-To change the branch name, edit `Default.sublime-commands`.
-
-For example, to change the branch name from `master` to `main`, edit the following as such:
-
-From:
-
-```
-  {
-    "caption": "GitHubinator Blame on Master",
-    "command": "githubinator",
-    "args": { "permalink": false, "mode": "blame", "branch": "master" }
-  },
-```
-
-To:
-
-```
-  {
-    "caption": "GitHubinator Blame on Main",
-    "command": "githubinator",
-    "args": { "permalink": false, "mode": "blame", "branch": "main" }
-  },
-```
 
 ## Usage
 
