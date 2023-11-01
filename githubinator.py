@@ -1,6 +1,7 @@
 import codecs
 import os
 import re
+import webbrowser
 
 import sublime
 import sublime_plugin
@@ -149,7 +150,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
             sublime.status_message("Copied %s to clipboard." % full_link)
 
             if not copyonly:
-                self.view.window().run_command("open_url", {"url": full_link})
+                webbrowser.open_new_tab(full_link)
 
             break
 
