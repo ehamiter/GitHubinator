@@ -20,7 +20,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
     """
     DEFAULT_GIT_REMOTE = "origin"
     DEFAULT_HOST = "github.com"
-    DEFAULT_BRANCH = "master"
+    DEFAULT_BRANCH = "main"
 
     def load_config(self):
         settings = sublime.load_settings("Githubinator.sublime-settings")
@@ -184,7 +184,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         if not ref.startswith('refs/'):
             # we are in detached head mode and ref will be
             # `26e7c31036641177fa929e5a3ae925f214b23ed9`, instead of
-            # `ref/heads/master`. So we're returning the sha when we return ref.
+            # `ref/heads/main`. So we're returning the sha when we return ref.
             return ref, None
 
         sha = self.get_sha_from_ref(git_dir, ref)
@@ -198,7 +198,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
     def get_ref(self, git_dir):
         head_path = os.path.join(git_dir, "HEAD")
         with open(head_path, "r") as f:
-            # Something like "ref: refs/heads/master"
+            # Something like "ref: refs/heads/main"
             return f.read().replace("ref: ", "")[:-1]
 
     def get_sha_from_packed_refs(self, git_dir, ref):
@@ -208,7 +208,7 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
         Example:
         # pack-refs with: peeled fully-peeled sorted
-        0252a960f3cb3d93f1d080539f5be92efbc41200 refs/remotes/origin/master
+        0252a960f3cb3d93f1d080539f5be92efbc41200 refs/remotes/origin/main
         """
         packed_ref_path = os.path.join(git_dir, "packed-refs")
 
