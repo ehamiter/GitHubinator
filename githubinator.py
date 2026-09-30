@@ -1,6 +1,6 @@
-import codecs
 import os
 import re
+import subprocess
 import webbrowser
 
 import sublime
@@ -43,59 +43,16 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         full_name = os.path.realpath(self.view.file_name())
         folder_name, file_name = os.path.split(full_name)
 
-        # Try to find a git directory
-        git_worktree = self.recurse_dir(folder_name, ".git")
-        if not git_worktree:
-            sublime.status_message("Could not find .git directory.")
+        try:
+            # Path of the current folder relative to the repo root, like "src/"
+            prefix = self.run_git(folder_name, "rev-parse", "--show-prefix")
+            sha = self.run_git(folder_name, "rev-parse", "HEAD")
+        except (OSError, subprocess.CalledProcessError):
+            sublime.status_message("Could not find git repository.")
             return
+        path = prefix + file_name
 
-        relative_git_worktree = folder_name[len(git_worktree):]
-
-        # path names normalize for UNC styling
-        if os.name == "nt":
-            relative_git_worktree = relative_git_worktree.replace("\\", "/")
-            file_name = file_name.replace("\\", "/")
-
-        git_dir = os.path.join(git_worktree, ".git")
-
-        is_linked_git = not os.path.isdir(git_dir)
-        if is_linked_git:
-            # we're in a linked Git repo (either a submodule or a worktree)
-            with codecs.open(os.path.join(git_dir), "r", "utf-8") as git_link_file:
-                # we need to get the link to the git folder from the .git file
-                result = re.search(r"^gitdir: (.*) *$", git_link_file.read())
-                if result:
-                    matches = result.groups()
-                    if matches[0]:
-                        linked_path = matches[0]
-                        if os.path.isabs(linked_path):
-                            git_dir = linked_path
-                        else:
-                            git_dir = os.path.join(git_worktree, linked_path)
-                        if git_dir.find("/.git/worktrees/"):
-                            git_dir = re.sub(r'/.git/worktrees/[^/]+$', '/.git', git_dir)
-
-        # Read the config file in .git
-        git_config_path = os.path.join(git_dir, "config")
-        with codecs.open(git_config_path, "r", "utf-8") as git_config_file:
-            config = git_config_file.read()
-
-        # Figure out the host
-        # https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols
-        scheme = "https"
-        result = re.search(r"url.*?=.*?((https?)://([^/]*)/)|(git@([^:]*):)", config)
-        # Example: (None, None, None, 'git@github.com:', 'github.com')
-        if result:
-            matches = result.groups()
-            if matches[0]:
-                scheme = matches[1]
-                self.default_host = matches[2]
-            else:
-                self.default_host = matches[4]
-
-        re_host = re.escape(self.default_host)
-
-        sha, current_branch = self.get_git_status(git_dir)
+        current_branch = self.try_run_git(folder_name, "symbolic-ref", "--short", "HEAD")
         if not branch:
             branch = current_branch
 
@@ -105,27 +62,26 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
         detected_remote = None
         # we can only do this search when we have a branch to work with.
         if branch is not None:
-            regex = r".*\s.*(?:remote = )(\w+?)\r?\n"
-            result = re.search(branch + regex, config)
-
-            if result:
-                matches = result.groups()
-                detected_remote = [matches[0]]
+            remote = self.try_run_git(folder_name, "config", "branch.%s.remote" % branch)
+            if remote:
+                detected_remote = [remote]
 
         for remote in (detected_remote or self.default_remote):
-
-            regex = r".*\s.*(?:https?://%s/|%s:|git://%s/)(.*)/(.*?)(?:\.git)?\r?\n" % (re_host, re_host, re_host)
-            result = re.search(remote + regex, config)
-            if not result:
+            url = self.try_run_git(folder_name, "remote", "get-url", remote)
+            if not url:
                 continue
 
-            matches = result.groups()
-            username = matches[0]
-            project = matches[1]
+            # https://git-scm.com/docs/git-clone#_git_urls
+            # Examples: https://github.com/user/project.git, git@github.com:user/project.git
+            result = re.match(r"^(?:(\w+)://)?(?:[^@/]+@)?([^/:]+)(?::\d+)?[:/](.+?)(?:\.git)?/?$", url)
+            if not result:
+                continue
+            url_scheme, self.default_host, repo_path = result.groups()
+            scheme = "http" if url_scheme == "http" else "https"
 
             lines = self.get_selected_line_nums()
 
-            repo_link = scheme + "://%s/%s/%s/" % (self.default_host, username, project)
+            repo_link = scheme + "://%s/%s/" % (self.default_host, repo_path)
 
             if open_repo:
                 full_link = repo_link
@@ -133,16 +89,13 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                 if "bitbucket" in self.default_host:
                     mode = "src" if mode == "blob" else "annotate"
                     lines = ":".join([str(l) for l in lines])
-                    full_link = repo_link + "%s/%s%s/%s#cl-%s" % \
-                        (mode, sha, relative_git_worktree, file_name, lines)
+                    full_link = repo_link + "%s/%s/%s#cl-%s" % (mode, sha, path, lines)
                 elif "gitlab" in self.default_host:
                     lines = "-".join("%s" % line for line in lines)
-                    full_link = repo_link + "%s/%s%s/%s#L%s" % \
-                        (mode, target, relative_git_worktree, file_name, lines)
+                    full_link = repo_link + "%s/%s/%s#L%s" % (mode, target, path, lines)
                 else:
                     lines = "-".join("L%s" % line for line in lines)
-                    full_link = repo_link + "%s/%s%s/%s#%s" % \
-                        (mode, target, relative_git_worktree, file_name, lines)
+                    full_link = repo_link + "%s/%s/%s#%s" % (mode, target, path, lines)
 
             full_link = quote(full_link, safe=':/#@')
 
@@ -174,61 +127,23 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
 
         return lines
 
-    def get_git_status(self, git_dir):
-        """Get the current branch and SHA from git.
+    def run_git(self, cwd, *args):
+        startupinfo = None
+        if os.name == "nt":
+            # Don't flash a console window on Windows
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        output = subprocess.check_output(
+            ("git",) + args, cwd=cwd, stderr=subprocess.DEVNULL, startupinfo=startupinfo
+        )
+        return output.decode("utf-8").strip()
 
-        type: (str) -> (str, Optional[str])
-        """
-        ref = self.get_ref(git_dir)
-
-        if not ref.startswith('refs/'):
-            # we are in detached head mode and ref will be
-            # `26e7c31036641177fa929e5a3ae925f214b23ed9`, instead of
-            # `ref/heads/main`. So we're returning the sha when we return ref.
-            return ref, None
-
-        sha = self.get_sha_from_ref(git_dir, ref)
-        if not sha:
-            sha = self.get_sha_from_packed_refs(git_dir, ref)
-
-        branch = ref.replace("refs/heads/", "")
-
-        return sha, branch
-
-    def get_ref(self, git_dir):
-        head_path = os.path.join(git_dir, "HEAD")
-        with open(head_path, "r") as f:
-            # Something like "ref: refs/heads/main"
-            return f.read().replace("ref: ", "")[:-1]
-
-    def get_sha_from_packed_refs(self, git_dir, ref):
-        """Get a sha from `.git/packed-refs`, useful if `.git/HEAD` is a tag
-
-        `.git/packed-refs` is a list of commit hashes and their refs
-
-        Example:
-        # pack-refs with: peeled fully-peeled sorted
-        0252a960f3cb3d93f1d080539f5be92efbc41200 refs/remotes/origin/main
-        """
-        packed_ref_path = os.path.join(git_dir, "packed-refs")
-
-        if not os.path.isfile(packed_ref_path):
+    def try_run_git(self, cwd, *args):
+        """Like `run_git`, but return None if the command fails."""
+        try:
+            return self.run_git(cwd, *args) or None
+        except subprocess.CalledProcessError:
             return None
-        regex = r"\s{0}(\s.*)?$".format(ref)
-        with codecs.open(packed_ref_path, "r", "utf-8") as f:
-            try:
-                for line in f:
-                    if re.search(regex, line):
-                        return line.split(" ")[0]
-            except UnicodeDecodeError:
-                pass
-
-    def get_sha_from_ref(self, git_dir, ref):
-        ref_path = os.path.join(git_dir, ref)
-        if not os.path.isfile(ref_path):
-            return None
-        with open(ref_path, "r") as f:
-            return f.read().strip()
 
     def recurse_dir(self, path, folder):
         """Traverse through parent directories until we find `folder`, starting
